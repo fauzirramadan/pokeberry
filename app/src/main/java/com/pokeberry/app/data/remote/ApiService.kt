@@ -1,6 +1,7 @@
 package com.pokeberry.app.data.remote
 
 import com.pokeberry.app.data.dto.BerryResponseDto
+import com.pokeberry.app.data.dto.ItemDetailDto
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.GET
@@ -21,4 +22,9 @@ interface ApiService {
     suspend fun getBerryDetail(
         @Path("id") id: Int
     ): Response<ResponseBody>
+
+    @GET
+    suspend fun getItemDetail(
+        @Url url: String
+    ): ItemDetailDto
 }

@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.pokeberry.app.data.mapper.toDomain
 import com.pokeberry.app.data.dto.BerryDetailDto
 import com.pokeberry.app.data.dto.BerryResponseDto
+import com.pokeberry.app.data.dto.ItemDetailDto
 import com.pokeberry.app.network.RetrofitClient
 import com.pokeberry.app.domain.model.Berry
 import com.pokeberry.app.domain.model.BerryDetail
@@ -39,5 +40,9 @@ class BerryRepository {
         val dto = Gson().fromJson(rawJson, BerryDetailDto::class.java)
 
         return Pair(dto.toDomain(), rawJson)
+    }
+
+    suspend fun getItemDetail(url: String): ItemDetailDto {
+        return apiService.getItemDetail(url)
     }
 }

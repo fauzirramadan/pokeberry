@@ -45,8 +45,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.pokeberry.app.presentation.viewmodel.BerryDetailViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -78,7 +80,7 @@ fun BerryDetailScreen(
             CenterAlignedTopAppBar(
 
                 title = {
-                    Text("Berry Detail 🍓")
+                    Text("Berry Detail")
                 },
 
                 navigationIcon = {
@@ -163,24 +165,13 @@ fun BerryDetailScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
 
-                                Box(
-                                    modifier = Modifier
-                                        .size(90.dp)
-                                        .clip(CircleShape)
-                                        .background(
-                                            MaterialTheme.colorScheme.primaryContainer
-                                        ),
+                                val itemSpriteUrl by viewModel.itemSpriteUrl.collectAsState()
 
-                                    contentAlignment = Alignment.Center
-                                ) {
-
-                                    Icon(
-                                        imageVector = Icons.Default.LocalFlorist,
-                                        contentDescription = null,
-
-                                        modifier = Modifier.size(48.dp)
-                                    )
-                                }
+                                AsyncImage(
+                                    model = itemSpriteUrl,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(80.dp)
+                                )
 
                                 Spacer(modifier = Modifier.height(16.dp))
 

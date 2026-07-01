@@ -6,8 +6,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material3.AlertDialog
@@ -31,11 +34,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pokeberry.app.presentation.component.BerryItem
 import com.pokeberry.app.presentation.viewmodel.BerryViewModel
 import kotlinx.coroutines.flow.distinctUntilChanged
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,17 +59,17 @@ fun BerryScreen(
     val lastResponse by
     viewModel.lastResponse.collectAsState()
 
-    val listState = rememberLazyListState()
+    val gridState = rememberLazyGridState()
 
     var showDebugDialog by remember {
         mutableStateOf(false)
     }
 
-    LaunchedEffect(listState) {
+    LaunchedEffect(gridState) {
 
         snapshotFlow {
 
-            listState.layoutInfo
+            gridState.layoutInfo
                 .visibleItemsInfo
                 .lastOrNull()
                 ?.index
@@ -92,7 +97,7 @@ fun BerryScreen(
             TopAppBar(
 
                 title = {
-                    Text("Berries 🍓")
+                    Text("Poke Berries 🍓")
                 },
 
                 actions = {
@@ -126,14 +131,19 @@ fun BerryScreen(
 
             content = {
 
-                LazyColumn(
-                    state = listState,
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    state = gridState,
 
                     modifier = Modifier.padding(paddingValues),
 
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
 
                     contentPadding = PaddingValues(
+                        start = 16.dp,
+                        end = 16.dp,
+                        top = 16.dp,
                         bottom = 16.dp
                     )
                 ) {
@@ -149,7 +159,9 @@ fun BerryScreen(
                         )
                     }
 
-                    item {
+                    item(
+                        span = { GridItemSpan(maxLineSpan) }
+                    ) {
 
                         if (isLoading) {
 

@@ -7,5 +7,6 @@ data class BerryDetail(
     val maxHarvest: Int,
     val size: Int,
     val smoothness: Int,
-    val soilDryness: Int
+    val soilDryness: Int,
+    val itemUrl: String?
 )

@@ -27,6 +27,7 @@ fun BerryDetailDto.toDomain(): BerryDetail {
         maxHarvest = max_harvest,
         size = size,
         smoothness = smoothness,
-        soilDryness = soil_dryness
+        soilDryness = soil_dryness,
+        itemUrl = item.url
     )
 }

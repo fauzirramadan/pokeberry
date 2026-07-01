@@ -46,6 +46,7 @@ dependencies {
     implementation(libs.retrofit.gson)
     implementation(libs.coroutines.android)
     implementation(libs.lifecycle.viewmodel.compose)
+    implementation("io.coil-kt:coil-compose:2.7.0")
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.gson)

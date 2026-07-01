@@ -7,5 +7,11 @@ data class BerryDetailDto(
     val max_harvest: Int,
     val size: Int,
     val smoothness: Int,
-    val soil_dryness: Int
+    val soil_dryness: Int,
+    val item: ItemReferenceDto
+)
+
+data class ItemReferenceDto(
+    val name: String,
+    val url: String
 )

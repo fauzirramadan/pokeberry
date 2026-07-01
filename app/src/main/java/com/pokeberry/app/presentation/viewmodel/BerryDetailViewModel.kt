@@ -18,6 +18,12 @@ class BerryDetailViewModel : ViewModel() {
     val berry: StateFlow<BerryDetail?> =
         _berry
 
+    private val _itemSpriteUrl =
+        MutableStateFlow<String?>(null)
+
+    val itemSpriteUrl: StateFlow<String?> =
+        _itemSpriteUrl
+
     private val _isLoading =
         MutableStateFlow(false)
 
@@ -53,6 +59,11 @@ class BerryDetailViewModel : ViewModel() {
                     repository.getBerryDetail(id)
 
                 _berry.value = response
+                
+                response.itemUrl?.let { url ->
+                    val itemDetail = repository.getItemDetail(url)
+                    _itemSpriteUrl.value = itemDetail.sprites.default
+                }
 
                 _lastResponse.value = rawJson
 
