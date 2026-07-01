@@ -2,7 +2,7 @@ package com.pokeberry.app.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pokeberry.app.data.repository.BerryRepository
+import com.pokeberry.app.data.remote.BerryRepository
 import com.pokeberry.app.domain.model.BerryDetail
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

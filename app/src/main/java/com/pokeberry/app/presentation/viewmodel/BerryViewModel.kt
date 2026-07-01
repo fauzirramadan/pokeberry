@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.pokeberry.app.data.mapper.toDomain
-import com.pokeberry.app.data.repository.BerryRepository
+import com.pokeberry.app.data.remote.BerryRepository
 import com.pokeberry.app.domain.model.Berry
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -1,4 +1,4 @@
-package com.pokeberry.app.data.repository
+package com.pokeberry.app.data.remote
 
 import com.google.gson.Gson
 import com.pokeberry.app.data.mapper.toDomain
