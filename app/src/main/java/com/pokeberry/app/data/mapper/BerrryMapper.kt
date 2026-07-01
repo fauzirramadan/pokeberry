@@ -1,7 +1,7 @@
 package com.pokeberry.app.data.mapper
 
-import com.pokeberry.app.data.remote.BerryDetailDto
-import com.pokeberry.app.data.remote.BerryDto
+import com.pokeberry.app.data.dto.BerryDetailDto
+import com.pokeberry.app.data.dto.BerryDto
 import com.pokeberry.app.domain.model.Berry
 import com.pokeberry.app.domain.model.BerryDetail
 

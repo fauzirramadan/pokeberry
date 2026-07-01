@@ -2,8 +2,8 @@ package com.pokeberry.app.data.repository
 
 import com.google.gson.Gson
 import com.pokeberry.app.data.mapper.toDomain
-import com.pokeberry.app.data.remote.BerryDetailDto
-import com.pokeberry.app.data.remote.BerryResponseDto
+import com.pokeberry.app.data.dto.BerryDetailDto
+import com.pokeberry.app.data.dto.BerryResponseDto
 import com.pokeberry.app.network.RetrofitClient
 import com.pokeberry.app.domain.model.Berry
 import com.pokeberry.app.domain.model.BerryDetail

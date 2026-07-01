@@ -1,5 +1,6 @@
 package com.pokeberry.app.data.remote
 
+import com.pokeberry.app.data.dto.BerryResponseDto
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.GET

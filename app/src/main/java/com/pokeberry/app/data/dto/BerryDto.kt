@@ -1,4 +1,4 @@
-package com.pokeberry.app.data.remote
+package com.pokeberry.app.data.dto
 
 data class BerryDto(
     val name: String,
