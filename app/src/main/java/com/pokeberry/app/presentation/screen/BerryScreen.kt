@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pokeberry.app.presentation.component.BerryItem
 import com.pokeberry.app.presentation.viewmodel.BerryViewModel
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,7 +69,9 @@ fun BerryScreen(
                 .lastOrNull()
                 ?.index
 
-        }.collect { lastVisibleIndex ->
+        }
+            .distinctUntilChanged()
+            .collect { lastVisibleIndex ->
 
             if (lastVisibleIndex != null) {
                 if (
