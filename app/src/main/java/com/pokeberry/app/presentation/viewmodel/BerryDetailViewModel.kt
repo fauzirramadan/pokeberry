@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pokeberry.app.data.remote.BerryRepository
 import com.pokeberry.app.domain.model.BerryDetail
+import com.pokeberry.app.network.ConnectivityObserver
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -30,21 +31,42 @@ class BerryDetailViewModel : ViewModel() {
     val isLoading: StateFlow<Boolean> =
         _isLoading
 
-    // REQUEST URL
     private val _lastRequestUrl =
         MutableStateFlow("")
 
     val lastRequestUrl: StateFlow<String> =
         _lastRequestUrl
 
-    // RAW RESPONSE JSON
     private val _lastResponse =
         MutableStateFlow("")
 
     val lastResponse: StateFlow<String> =
         _lastResponse
 
+    private var pendingBerryId: Int? = null
+
+    init {
+        observeRetrySignal()
+    }
+
+    private fun observeRetrySignal() {
+        viewModelScope.launch {
+            ConnectivityObserver.retrySignal.collect {
+                pendingBerryId?.let { id ->
+                    pendingBerryId = null
+                    fetchBerryDetail(id)
+                }
+            }
+        }
+    }
+
     fun fetchBerryDetail(id: Int) {
+
+        if (!ConnectivityObserver.isConnected()) {
+            pendingBerryId = id
+            ConnectivityObserver.notifyNoConnection()
+            return
+        }
 
         viewModelScope.launch {
 
@@ -59,7 +81,7 @@ class BerryDetailViewModel : ViewModel() {
                     repository.getBerryDetail(id)
 
                 _berry.value = response
-                
+
                 response.itemUrl?.let { url ->
                     val itemDetail = repository.getItemDetail(url)
                     _itemSpriteUrl.value = itemDetail.sprites.default

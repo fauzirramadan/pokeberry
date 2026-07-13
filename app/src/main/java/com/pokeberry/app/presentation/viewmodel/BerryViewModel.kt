@@ -6,6 +6,7 @@ import com.google.gson.Gson
 import com.pokeberry.app.data.mapper.toDomain
 import com.pokeberry.app.data.remote.BerryRepository
 import com.pokeberry.app.domain.model.Berry
+import com.pokeberry.app.network.ConnectivityObserver
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -39,9 +40,25 @@ class BerryViewModel : ViewModel() {
 
     init {
         fetchBerryList()
+        observeRetrySignal()
+    }
+
+    private fun observeRetrySignal() {
+        viewModelScope.launch {
+            ConnectivityObserver.retrySignal.collect {
+                if (_berries.value.isEmpty() || nextUrl != null) {
+                    fetchBerryList()
+                }
+            }
+        }
     }
 
     fun fetchBerryList() {
+
+        if (!ConnectivityObserver.isConnected()) {
+            ConnectivityObserver.notifyNoConnection()
+            return
+        }
 
         if (_isLoading.value) return
 
@@ -67,8 +84,7 @@ class BerryViewModel : ViewModel() {
                     it.toDomain()
                 }
 
-                _berries.value =
-                    _berries.value + newList
+                _berries.value += newList
 
                 nextUrl = response.next
 
@@ -92,4 +108,3 @@ class BerryViewModel : ViewModel() {
         fetchBerryList()
     }
 }
-

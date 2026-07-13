@@ -1,11 +1,18 @@
 package com.pokeberry.app.presentation.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.pokeberry.app.network.ConnectivityObserver
+import com.pokeberry.app.presentation.component.NoInternetBottomSheet
 import com.pokeberry.app.presentation.screen.BerryDetailScreen
 import com.pokeberry.app.presentation.screen.BerryScreen
 
@@ -13,6 +20,12 @@ import com.pokeberry.app.presentation.screen.BerryScreen
 fun AppNavigation() {
 
     val navController = rememberNavController()
+
+    val noInternetVersion by ConnectivityObserver.noInternetVersion.collectAsState()
+
+    var dismissedVersion by rememberSaveable { mutableIntStateOf(0) }
+
+    val showBottomSheet = noInternetVersion > dismissedVersion
 
     NavHost(
         navController = navController,
@@ -54,5 +67,16 @@ fun AppNavigation() {
                 }
             )
         }
+    }
+
+    if (showBottomSheet) {
+
+        NoInternetBottomSheet(
+
+            onRetry = {
+                dismissedVersion = noInternetVersion
+                ConnectivityObserver.signalRetry()
+            }
+        )
     }
 }
