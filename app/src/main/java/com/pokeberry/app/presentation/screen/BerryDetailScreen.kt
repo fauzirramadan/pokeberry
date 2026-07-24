@@ -34,6 +34,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -45,7 +46,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
@@ -121,117 +121,125 @@ fun BerryDetailScreen(
 
     ) { paddingValues ->
 
-        if (isLoading) {
-
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-
-                contentAlignment = Alignment.Center
-            ) {
-
-                CircularProgressIndicator()
+        PullToRefreshBox(
+            isRefreshing = isLoading,
+            onRefresh = {
+                viewModel.fetchBerryDetail(berryId)
             }
+        ) {
+            if (isLoading) {
 
-        } else {
-
-            berry?.let { data ->
-
-                LazyColumn(
+                Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(paddingValues)
-                        .padding(16.dp),
+                        .padding(paddingValues),
 
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    contentAlignment = Alignment.Center
                 ) {
 
-                    item {
+                    CircularProgressIndicator()
+                }
 
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
+            } else {
 
-                            shape = RoundedCornerShape(28.dp),
+                berry?.let { data ->
 
-                            elevation = CardDefaults.cardElevation(
-                                defaultElevation = 8.dp
-                            )
-                        ) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues)
+                            .padding(16.dp),
 
-                            Column(
-                                modifier = Modifier.padding(24.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
 
-                                horizontalAlignment = Alignment.CenterHorizontally
+                        item {
+
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+
+                                shape = RoundedCornerShape(28.dp),
+
+                                elevation = CardDefaults.cardElevation(
+                                    defaultElevation = 8.dp
+                                )
                             ) {
 
-                                val itemSpriteUrl by viewModel.itemSpriteUrl.collectAsState()
+                                Column(
+                                    modifier = Modifier.padding(24.dp),
 
-                                AsyncImage(
-                                    model = itemSpriteUrl,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(80.dp)
-                                )
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
 
-                                Spacer(modifier = Modifier.height(16.dp))
+                                    val itemSpriteUrl by viewModel.itemSpriteUrl.collectAsState()
 
-                                Text(
-                                    text = data.name.uppercase(),
+                                    AsyncImage(
+                                        model = itemSpriteUrl,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(80.dp)
+                                    )
 
-                                    style = MaterialTheme.typography.headlineMedium,
+                                    Spacer(modifier = Modifier.height(16.dp))
 
-                                    fontWeight = FontWeight.Bold
-                                )
+                                    Text(
+                                        text = data.name.uppercase(),
 
-                                Spacer(modifier = Modifier.height(8.dp))
+                                        style = MaterialTheme.typography.headlineMedium,
 
-                                Text(
-                                    text = "Berry ID #${data.id}",
+                                        fontWeight = FontWeight.Bold
+                                    )
 
-                                    style = MaterialTheme.typography.bodyLarge,
+                                    Spacer(modifier = Modifier.height(8.dp))
 
-                                    color = MaterialTheme.colorScheme.primary
-                                )
+                                    Text(
+                                        text = "Berry ID #${data.id}",
 
-                                Spacer(modifier = Modifier.height(20.dp))
+                                        style = MaterialTheme.typography.bodyLarge,
 
-                                HorizontalDivider()
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
 
-                                Spacer(modifier = Modifier.height(20.dp))
+                                    Spacer(modifier = Modifier.height(20.dp))
 
-                                BerryInfoCard(
-                                    icon = Icons.Default.Eco,
-                                    title = "Growth Time",
-                                    value = "${data.growthTime}"
-                                )
-                                BerryInfoCard(
-                                    icon = Icons.Default.Spa,
-                                    title = "Max Harvest",
-                                    value = "${data.maxHarvest}"
-                                )
-                                BerryInfoCard(
-                                    icon = Icons.Default.Eco,
-                                    title = "Size",
-                                    value = "${data.size}"
-                                )
+                                    HorizontalDivider()
 
-                                BerryInfoCard(
-                                    icon = Icons.Default.Spa,
-                                    title = "Smoothness",
-                                    value = "${data.smoothness}"
-                                )
+                                    Spacer(modifier = Modifier.height(20.dp))
 
-                                BerryInfoCard(
-                                    icon = Icons.Default.LocalFlorist,
-                                    title = "Soil Dryness",
-                                    value = "${data.soilDryness}"
-                                )
+                                    BerryInfoCard(
+                                        icon = Icons.Default.Eco,
+                                        title = "Growth Time",
+                                        value = "${data.growthTime}"
+                                    )
+                                    BerryInfoCard(
+                                        icon = Icons.Default.Spa,
+                                        title = "Max Harvest",
+                                        value = "${data.maxHarvest}"
+                                    )
+                                    BerryInfoCard(
+                                        icon = Icons.Default.Eco,
+                                        title = "Size",
+                                        value = "${data.size}"
+                                    )
+
+                                    BerryInfoCard(
+                                        icon = Icons.Default.Spa,
+                                        title = "Smoothness",
+                                        value = "${data.smoothness}"
+                                    )
+
+                                    BerryInfoCard(
+                                        icon = Icons.Default.LocalFlorist,
+                                        title = "Soil Dryness",
+                                        value = "${data.soilDryness}"
+                                    )
+                                }
                             }
                         }
                     }
                 }
             }
         }
+
     }
 
     if (showDebugDialog) {

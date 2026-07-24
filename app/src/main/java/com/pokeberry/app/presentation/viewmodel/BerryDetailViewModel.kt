@@ -34,9 +34,6 @@ class BerryDetailViewModel : ViewModel() {
     private val _lastRequestUrl =
         MutableStateFlow("")
 
-    val lastRequestUrl: StateFlow<String> =
-        _lastRequestUrl
-
     private val _lastResponse =
         MutableStateFlow("")
 
