@@ -3,6 +3,7 @@ package com.pokeberry.app.presentation.screen
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,7 +14,11 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Task
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -116,6 +121,10 @@ fun BerryScreen(
                     }
                 }
             )
+        },
+
+        bottomBar = {
+      BuildBottomBar()
         }
 
     ) { paddingValues ->
@@ -147,11 +156,11 @@ fun BerryScreen(
                     )
                 ) {
 
+
                     items(berries) { berry ->
 
                         BerryItem(
                             berry = berry,
-
                             onClick = {
                                 onBerryClick(berry.id)
                             }
@@ -210,9 +219,7 @@ fun BerryScreen(
             },
 
             text = {
-
                 LazyColumn {
-
                     item {
 
                         Text(
@@ -232,5 +239,43 @@ $lastResponse
                 }
             }
         )
+    }
+}
+
+@Composable
+private fun BuildBottomBar() {
+    BottomAppBar(
+        contentPadding = PaddingValues(
+            start = 16.dp,
+            end = 16.dp,
+            top = 16.dp,
+            bottom = 16.dp
+        )
+
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            IconButton(onClick = {}) {
+                Icon(
+                    imageVector = Icons.Default.Home,
+                    contentDescription = "Debug"
+                )
+            }
+            IconButton(onClick = {}) {
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = "Debug"
+                )
+            }
+            IconButton(onClick = {}) {
+                Icon(
+                    imageVector = Icons.Default.Task,
+                    contentDescription = "Debug"
+                )
+            }
+        }
+
     }
 }
