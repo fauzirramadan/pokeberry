@@ -130,66 +130,60 @@ fun BerryScreen(
     ) { paddingValues ->
 
         PullToRefreshBox(
-
             isRefreshing = isLoading,
-
             onRefresh = {
                 viewModel.refreshBerryList()
-            },
+            }
+        ) {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                state = gridState,
 
-            content = {
+                modifier = Modifier.padding(paddingValues),
 
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    state = gridState,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
 
-                    modifier = Modifier.padding(paddingValues),
+                contentPadding = PaddingValues(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = 16.dp,
+                    bottom = 16.dp
+                )
+            ) {
 
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                items(berries) { berry ->
 
-                    contentPadding = PaddingValues(
-                        start = 16.dp,
-                        end = 16.dp,
-                        top = 16.dp,
-                        bottom = 16.dp
+                    BerryItem(
+                        berry = berry,
+                        onClick = {
+                            onBerryClick(berry.id)
+                        }
                     )
+                }
+
+                item(
+                    span = { GridItemSpan(maxLineSpan) }
                 ) {
 
+                    if (isLoading) {
 
-                    items(berries) { berry ->
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
 
-                        BerryItem(
-                            berry = berry,
-                            onClick = {
-                                onBerryClick(berry.id)
-                            }
-                        )
-                    }
+                            contentAlignment = Alignment.Center
+                        ) {
 
-                    item(
-                        span = { GridItemSpan(maxLineSpan) }
-                    ) {
-
-                        if (isLoading) {
-
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp),
-
-                                contentAlignment = Alignment.Center
-                            ) {
-
-                                CircularProgressIndicator(
-                                    strokeWidth = 2.dp
-                                )
-                            }
+                            CircularProgressIndicator(
+                                strokeWidth = 2.dp
+                            )
                         }
                     }
                 }
             }
-        )
+        }
     }
 
     if (showDebugDialog) {
@@ -251,13 +245,14 @@ private fun BuildBottomBar() {
             top = 16.dp,
             bottom = 16.dp
         )
-
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            IconButton(onClick = {}) {
+            IconButton(onClick = {
+
+            }) {
                 Icon(
                     imageVector = Icons.Default.Home,
                     contentDescription = "Debug"
