@@ -3,7 +3,7 @@ package com.pokeberry.app.presentation.screen
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,11 +14,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Code
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Task
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -39,143 +35,90 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pokeberry.app.presentation.component.BerryItem
 import com.pokeberry.app.presentation.viewmodel.BerryViewModel
 import kotlinx.coroutines.flow.distinctUntilChanged
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BerryScreen(
-    onBerryClick: (Int) -> Unit,
-    viewModel: BerryViewModel = viewModel()
+    onBerryClick: (Int) -> Unit, viewModel: BerryViewModel = viewModel()
 ) {
-
     val berries by viewModel.berries.collectAsState()
-
     val isLoading by viewModel.isLoading.collectAsState()
-
-    val lastRequestUrl by
-    viewModel.lastRequestUrl.collectAsState()
-
-    val lastResponse by
-    viewModel.lastResponse.collectAsState()
-
+    val lastRequestUrl by viewModel.lastRequestUrl.collectAsState()
+    val lastResponse by viewModel.lastResponse.collectAsState()
     val gridState = rememberLazyGridState()
-
     var showDebugDialog by remember {
         mutableStateOf(false)
     }
 
+    val layoutDirection = LocalLayoutDirection.current
+
     LaunchedEffect(gridState) {
-
         snapshotFlow {
-
-            gridState.layoutInfo
-                .visibleItemsInfo
-                .lastOrNull()
-                ?.index
-
-        }
-            .distinctUntilChanged()
-            .collect { lastVisibleIndex ->
-
+            gridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
+        }.distinctUntilChanged().collect { lastVisibleIndex ->
             if (lastVisibleIndex != null) {
-                if (
-                    lastVisibleIndex >= berries.lastIndex - 3
-                    && !isLoading
-                ) {
-
+                if (lastVisibleIndex >= berries.lastIndex - 3 && !isLoading) {
                     viewModel.fetchBerryList()
                 }
             }
         }
     }
 
-    Scaffold(
-
-        topBar = {
-
-            TopAppBar(
-
-                title = {
-                    Text("Poke Berries 🍓")
-                },
-
-                actions = {
-
-                    IconButton(
-
-                        onClick = {
-                            showDebugDialog = true
-                        }
-
-                    ) {
-
-                        Icon(
-                            imageVector = Icons.Default.Code,
-                            contentDescription = "Debug"
-                        )
-                    }
-                }
-            )
-        },
-
-        bottomBar = {
-      BuildBottomBar()
-        }
-
-    ) { paddingValues ->
-
-        PullToRefreshBox(
-            isRefreshing = isLoading,
-            onRefresh = {
-                viewModel.refreshBerryList()
+    Scaffold(topBar = {
+        TopAppBar(title = {
+            Text("Poke Berries 🍓")
+        }, actions = {
+            IconButton(
+                onClick = {
+                    showDebugDialog = true
+                }) {
+                Icon(
+                    imageVector = Icons.Default.Code, contentDescription = "Debug"
+                )
             }
-        ) {
+        })
+    }) { paddingValues ->
+        PullToRefreshBox(
+            isRefreshing = isLoading, onRefresh = {
+                viewModel.refreshBerryList()
+            }) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 state = gridState,
-
-                modifier = Modifier.padding(paddingValues),
-
+                modifier = Modifier
+                    .padding(
+                        top = paddingValues.calculateTopPadding(),
+                        bottom = 0.dp,
+                    )
+                    .padding(horizontal = paddingValues.calculateStartPadding(layoutDirection)),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
-
                 contentPadding = PaddingValues(
-                    start = 16.dp,
-                    end = 16.dp,
-                    top = 16.dp,
-                    bottom = 16.dp
+                    start = 16.dp, end = 16.dp, top = 16.dp, bottom = 16.dp
                 )
             ) {
-
                 items(berries) { berry ->
-
                     BerryItem(
-                        berry = berry,
-                        onClick = {
+                        berry = berry, onClick = {
                             onBerryClick(berry.id)
-                        }
-                    )
+                        })
                 }
 
                 item(
-                    span = { GridItemSpan(maxLineSpan) }
-                ) {
-
+                    span = { GridItemSpan(maxLineSpan) }) {
                     if (isLoading) {
-
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(16.dp),
-
                             contentAlignment = Alignment.Center
                         ) {
-
                             CircularProgressIndicator(
                                 strokeWidth = 2.dp
                             )
@@ -187,90 +130,34 @@ fun BerryScreen(
     }
 
     if (showDebugDialog) {
-
-        AlertDialog(
-
-            onDismissRequest = {
-                showDebugDialog = false
-            },
-
-            confirmButton = {
-
-                TextButton(
-
-                    onClick = {
-                        showDebugDialog = false
-                    }
-
-                ) {
-
-                    Text("Close")
-                }
-            },
-
-            title = {
-                Text("API Debug 📡")
-            },
-
-            text = {
-                LazyColumn {
-                    item {
-
-                        Text(
-                            text =
-                                """
+        AlertDialog(onDismissRequest = {
+            showDebugDialog = false
+        }, confirmButton = {
+            TextButton(
+                onClick = {
+                    showDebugDialog = false
+                }) {
+                Text("Close")
+            }
+        }, title = {
+            Text("API Debug 📡")
+        }, text = {
+            LazyColumn {
+                item {
+                    Text(
+                        text = """
 REQUEST:
 GET $lastRequestUrl
 
 
 RESPONSE:
 $lastResponse
-                            """.trimIndent(),
-
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
+                            """.trimIndent(), style = MaterialTheme.typography.bodySmall
+                    )
                 }
             }
-        )
+        })
     }
 }
 
-@Composable
-private fun BuildBottomBar() {
-    BottomAppBar(
-        contentPadding = PaddingValues(
-            start = 16.dp,
-            end = 16.dp,
-            top = 16.dp,
-            bottom = 16.dp
-        )
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            IconButton(onClick = {
 
-            }) {
-                Icon(
-                    imageVector = Icons.Default.Home,
-                    contentDescription = "Debug"
-                )
-            }
-            IconButton(onClick = {}) {
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = "Debug"
-                )
-            }
-            IconButton(onClick = {}) {
-                Icon(
-                    imageVector = Icons.Default.Task,
-                    contentDescription = "Debug"
-                )
-            }
-        }
-
-    }
-}

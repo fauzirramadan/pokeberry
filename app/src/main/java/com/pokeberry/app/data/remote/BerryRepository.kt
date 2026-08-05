@@ -1,13 +1,13 @@
 package com.pokeberry.app.data.remote
 
 import com.google.gson.Gson
-import com.pokeberry.app.data.mapper.toDomain
 import com.pokeberry.app.data.dto.BerryDetailDto
 import com.pokeberry.app.data.dto.BerryResponseDto
 import com.pokeberry.app.data.dto.ItemDetailDto
-import com.pokeberry.app.network.RetrofitClient
+import com.pokeberry.app.data.mapper.toDomain
 import com.pokeberry.app.domain.model.Berry
 import com.pokeberry.app.domain.model.BerryDetail
+import com.pokeberry.app.network.RetrofitClient
 
 class BerryRepository {
 
@@ -15,20 +15,14 @@ class BerryRepository {
 
     suspend fun getBerries(): List<Berry> {
 
-        return apiService
-            .getBerries()
-            .results
-            .map { it.toDomain() }
+        return apiService.getBerries().results.map { it.toDomain() }
     }
 
     suspend fun getBerryListByUrl(
         url: String
     ): BerryResponseDto {
 
-
-        val response = RetrofitClient
-            .apiService
-            .getBerryListByUrl(url)
+        val response = RetrofitClient.apiService.getBerryListByUrl(url)
 
         return response
     }

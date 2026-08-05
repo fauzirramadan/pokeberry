@@ -6,6 +6,10 @@ sealed class Screen(
 
     data object BerryList : Screen("berry_list")
 
+    data object Task : Screen("task")
+
+    data object Settings : Screen("settings")
+
     data object BerryDetail : Screen("berry_detail/{id}") {
 
         fun createRoute(id: Int): String {
