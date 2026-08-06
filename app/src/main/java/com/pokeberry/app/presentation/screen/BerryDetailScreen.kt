@@ -54,229 +54,216 @@ import com.pokeberry.app.presentation.viewmodel.BerryDetailViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BerryDetailScreen(
-    berryId: Int,
-    onBackClick: () -> Unit,
-    viewModel: BerryDetailViewModel = viewModel()
+   berryId: Int, onBackClick: () -> Unit, viewModel: BerryDetailViewModel = viewModel()
 ) {
 
-    val berry by viewModel.berry.collectAsState()
+   val berry by viewModel.berry.collectAsState()
 
-    val lastResponse by viewModel.lastResponse.collectAsState()
+   val lastResponse by viewModel.lastResponse.collectAsState()
 
-    val isLoading by viewModel.isLoading.collectAsState()
+   val isLoading by viewModel.isLoading.collectAsState()
 
-    var showDebugDialog by remember {
-        mutableStateOf(false)
-    }
+   var showDebugDialog by remember {
+      mutableStateOf(false)
+   }
 
-    LaunchedEffect(Unit) {
-        viewModel.fetchBerryDetail(berryId)
-    }
+   LaunchedEffect(Unit) {
+      viewModel.fetchBerryDetail(berryId)
+   }
 
-    Scaffold(
+   Scaffold(
 
-        topBar = {
+      topBar = {
 
-            CenterAlignedTopAppBar(
-
-                title = {
-                    Text("Berry Detail")
-                },
-
-                navigationIcon = {
-
-                    IconButton(
-                        onClick = onBackClick
-                    ) {
-
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
-                        )
-                    }
-                },
-
-                actions = {
-
-                    IconButton(
-
-                        onClick = {
-                            showDebugDialog = true
-                        }
-
-                    ) {
-
-                        Icon(
-                            imageVector = Icons.Default.Code,
-                            contentDescription = "Debug"
-                        )
-                    }
-                },
-
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
-                )
-            )
-        }
-
-    ) { paddingValues ->
-
-        PullToRefreshBox(
-            isRefreshing = isLoading,
-            onRefresh = {
-                viewModel.fetchBerryDetail(berryId)
-            }
-        ) {
-            if (isLoading) {
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-
-                    contentAlignment = Alignment.Center
-                ) {
-
-                    CircularProgressIndicator()
-                }
-
-            } else {
-
-                berry?.let { data ->
-
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(paddingValues)
-                            .padding(16.dp),
-
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-
-                        item {
-
-                            Card(
-                                modifier = Modifier.fillMaxWidth(),
-
-                                shape = RoundedCornerShape(28.dp),
-
-                                elevation = CardDefaults.cardElevation(
-                                    defaultElevation = 8.dp
-                                )
-                            ) {
-
-                                Column(
-                                    modifier = Modifier.padding(24.dp),
-
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-
-                                    val itemSpriteUrl by viewModel.itemSpriteUrl.collectAsState()
-
-                                    AsyncImage(
-                                        model = itemSpriteUrl,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(80.dp)
-                                    )
-
-                                    Spacer(modifier = Modifier.height(16.dp))
-
-                                    Text(
-                                        text = data.name.uppercase(),
-
-                                        style = MaterialTheme.typography.headlineMedium,
-
-                                        fontWeight = FontWeight.Bold
-                                    )
-
-                                    Spacer(modifier = Modifier.height(8.dp))
-
-                                    Text(
-                                        text = "Berry ID #${data.id}",
-
-                                        style = MaterialTheme.typography.bodyLarge,
-
-                                        color = MaterialTheme.colorScheme.primary
-                                    )
-
-                                    Spacer(modifier = Modifier.height(20.dp))
-
-                                    HorizontalDivider()
-
-                                    Spacer(modifier = Modifier.height(20.dp))
-
-                                    BerryInfoCard(
-                                        icon = Icons.Default.Eco,
-                                        title = "Growth Time",
-                                        value = "${data.growthTime}"
-                                    )
-                                    BerryInfoCard(
-                                        icon = Icons.Default.Spa,
-                                        title = "Max Harvest",
-                                        value = "${data.maxHarvest}"
-                                    )
-                                    BerryInfoCard(
-                                        icon = Icons.Default.Eco,
-                                        title = "Size",
-                                        value = "${data.size}"
-                                    )
-
-                                    BerryInfoCard(
-                                        icon = Icons.Default.Spa,
-                                        title = "Smoothness",
-                                        value = "${data.smoothness}"
-                                    )
-
-                                    BerryInfoCard(
-                                        icon = Icons.Default.LocalFlorist,
-                                        title = "Soil Dryness",
-                                        value = "${data.soilDryness}"
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-    }
-
-    if (showDebugDialog) {
-
-        AlertDialog(
-
-            onDismissRequest = {
-                showDebugDialog = false
-            },
-
-            confirmButton = {
-
-                TextButton(
-
-                    onClick = {
-                        showDebugDialog = false
-                    }
-
-                ) {
-
-                    Text("Close")
-                }
-            },
+         CenterAlignedTopAppBar(
 
             title = {
-                Text("Detail API Debug 📡")
+               Text("Berry Detail")
             },
 
-            text = {
+            navigationIcon = {
 
-                LazyColumn {
+               IconButton(
+                  onClick = onBackClick
+               ) {
+                  Icon(
+                     imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back"
+                  )
+               }
+            },
 
-                    item {
+            actions = {
 
-                        Text(
-                            text =
-                                """
+               IconButton(
+
+                  onClick = {
+                     showDebugDialog = true
+                  }
+
+               ) {
+
+                  Icon(
+                     imageVector = Icons.Default.Code, contentDescription = "Debug"
+                  )
+               }
+            },
+
+            colors = TopAppBarDefaults.topAppBarColors(
+               containerColor = MaterialTheme.colorScheme.primaryContainer,
+            )
+         )
+      }
+
+   ) { paddingValues ->
+
+      PullToRefreshBox(
+         isRefreshing = isLoading, onRefresh = {
+            viewModel.fetchBerryDetail(berryId)
+         }) {
+         if (isLoading) {
+            Box(
+               modifier = Modifier
+                  .fillMaxSize()
+                  .padding(paddingValues),
+
+               contentAlignment = Alignment.Center
+            ) {
+
+               CircularProgressIndicator()
+            }
+
+         } else {
+
+            berry?.let { data ->
+
+               LazyColumn(
+                  modifier = Modifier
+                     .fillMaxSize()
+                     .padding(paddingValues)
+                     .padding(16.dp),
+
+                  verticalArrangement = Arrangement.spacedBy(16.dp)
+               ) {
+
+                  item {
+
+                     Card(
+                        modifier = Modifier.fillMaxWidth(),
+
+                        shape = RoundedCornerShape(28.dp),
+
+                        elevation = CardDefaults.cardElevation(
+                           defaultElevation = 8.dp
+                        )
+                     ) {
+
+                        Column(
+                           modifier = Modifier.padding(24.dp),
+
+                           horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+
+                           val itemSpriteUrl by viewModel.itemSpriteUrl.collectAsState()
+
+                           AsyncImage(
+                              model = itemSpriteUrl,
+                              contentDescription = null,
+                              modifier = Modifier.size(80.dp)
+                           )
+
+                           Spacer(modifier = Modifier.height(16.dp))
+
+                           Text(
+                              text = data.name.uppercase(),
+
+                              style = MaterialTheme.typography.headlineMedium,
+
+                              fontWeight = FontWeight.Bold
+                           )
+
+                           Spacer(modifier = Modifier.height(8.dp))
+
+                           Text(
+                              text = "Berry ID #${data.id}",
+
+                              style = MaterialTheme.typography.bodyLarge,
+
+                              color = MaterialTheme.colorScheme.primary
+                           )
+
+                           Spacer(modifier = Modifier.height(20.dp))
+
+                           HorizontalDivider()
+
+                           Spacer(modifier = Modifier.height(20.dp))
+
+                           BerryInfoCard(
+                              icon = Icons.Default.Eco,
+                              title = "Growth Time",
+                              value = "${data.growthTime}"
+                           )
+                           BerryInfoCard(
+                              icon = Icons.Default.Spa,
+                              title = "Max Harvest",
+                              value = "${data.maxHarvest}"
+                           )
+                           BerryInfoCard(
+                              icon = Icons.Default.Eco, title = "Size", value = "${data.size}"
+                           )
+                           BerryInfoCard(
+                              icon = Icons.Default.Spa,
+                              title = "Smoothness",
+                              value = "${data.smoothness}"
+                           )
+                           BerryInfoCard(
+                              icon = Icons.Default.LocalFlorist,
+                              title = "Soil Dryness",
+                              value = "${data.soilDryness}"
+                           )
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      }
+
+   }
+
+   if (showDebugDialog) {
+
+      AlertDialog(
+
+         onDismissRequest = {
+            showDebugDialog = false
+         },
+
+         confirmButton = {
+
+            TextButton(
+
+               onClick = {
+                  showDebugDialog = false
+               }
+
+            ) {
+
+               Text("Close")
+            }
+         },
+
+         title = {
+            Text("Detail API Debug 📡")
+         },
+
+         text = {
+
+            LazyColumn {
+
+               item {
+
+                  Text(
+                     text = """
 REQUEST:
 GET https://pokeapi.co/api/v2/berry/$berryId
 
@@ -285,77 +272,73 @@ RESPONSE:
 $lastResponse
                             """.trimIndent(),
 
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                }
+                     style = MaterialTheme.typography.bodySmall
+                  )
+               }
             }
-        )
-    }
+         })
+   }
 }
 
 @Composable
 fun BerryInfoCard(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    title: String,
-    value: String
+   icon: androidx.compose.ui.graphics.vector.ImageVector, title: String, value: String
 ) {
 
-    Card(
-        modifier = Modifier.fillMaxWidth(),
+   Card(
+      modifier = Modifier.fillMaxWidth(),
 
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer
-        ),
+      colors = CardDefaults.cardColors(
+         containerColor = MaterialTheme.colorScheme.secondaryContainer
+      ),
 
-        shape = RoundedCornerShape(18.dp)
-    ) {
+      shape = RoundedCornerShape(18.dp)
+   ) {
 
-        Row(
+      Row(
+         modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+
+         verticalAlignment = Alignment.CenterVertically
+      ) {
+
+         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+               .size(42.dp)
+               .clip(CircleShape)
+               .background(
+                  MaterialTheme.colorScheme.primaryContainer
+               ),
 
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+            contentAlignment = Alignment.Center
+         ) {
 
-            Box(
-                modifier = Modifier
-                    .size(42.dp)
-                    .clip(CircleShape)
-                    .background(
-                        MaterialTheme.colorScheme.primaryContainer
-                    ),
+            Icon(
+               imageVector = icon, contentDescription = null
+            )
+         }
 
-                contentAlignment = Alignment.Center
-            ) {
+         Spacer(modifier = Modifier.size(16.dp))
 
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null
-                )
-            }
+         Column {
 
-            Spacer(modifier = Modifier.size(16.dp))
+            Text(
+               text = title,
 
-            Column {
+               style = MaterialTheme.typography.bodyMedium,
 
-                Text(
-                    text = title,
+               fontWeight = FontWeight.SemiBold
+            )
 
-                    style = MaterialTheme.typography.bodyMedium,
+            Spacer(modifier = Modifier.height(4.dp))
 
-                    fontWeight = FontWeight.SemiBold
-                )
+            Text(
+               text = value,
 
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = value,
-
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
-        }
-    }
+               style = MaterialTheme.typography.bodyLarge
+            )
+         }
+      }
+   }
 }

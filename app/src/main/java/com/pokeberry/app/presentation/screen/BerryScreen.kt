@@ -36,6 +36,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pokeberry.app.presentation.component.BerryItem
@@ -45,119 +46,122 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BerryScreen(
-    onBerryClick: (Int) -> Unit, viewModel: BerryViewModel = viewModel()
+   onBerryClick: (Int) -> Unit, viewModel: BerryViewModel = viewModel()
 ) {
-    val berries by viewModel.berries.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
-    val lastRequestUrl by viewModel.lastRequestUrl.collectAsState()
-    val lastResponse by viewModel.lastResponse.collectAsState()
-    val gridState = rememberLazyGridState()
-    var showDebugDialog by remember {
-        mutableStateOf(false)
-    }
+   val berries by viewModel.berries.collectAsState()
+   val isLoading by viewModel.isLoading.collectAsState()
+   val lastRequestUrl by viewModel.lastRequestUrl.collectAsState()
+   val lastResponse by viewModel.lastResponse.collectAsState()
+   val gridState = rememberLazyGridState()
+   var showDebugDialog by remember {
+      mutableStateOf(false)
+   }
 
-    val layoutDirection = LocalLayoutDirection.current
+   val layoutDirection = LocalLayoutDirection.current
 
-    LaunchedEffect(gridState) {
-        snapshotFlow {
-            gridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
-        }.distinctUntilChanged().collect { lastVisibleIndex ->
-            if (lastVisibleIndex != null) {
-                if (lastVisibleIndex >= berries.lastIndex - 3 && !isLoading) {
-                    viewModel.fetchBerryList()
-                }
+   LaunchedEffect(gridState) {
+      snapshotFlow {
+         gridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
+      }.distinctUntilChanged().collect { lastVisibleIndex ->
+         if (lastVisibleIndex != null) {
+            if (lastVisibleIndex >= berries.lastIndex - 3 && !isLoading) {
+               viewModel.fetchBerryList()
             }
-        }
-    }
+         }
+      }
+   }
 
-    Scaffold(topBar = {
-        TopAppBar(title = {
-            Text("Poke Berries 🍓")
-        }, actions = {
-            IconButton(
-                onClick = {
-                    showDebugDialog = true
-                }) {
-                Icon(
-                    imageVector = Icons.Default.Code, contentDescription = "Debug"
-                )
-            }
-        })
-    }) { paddingValues ->
-        PullToRefreshBox(
-            isRefreshing = isLoading, onRefresh = {
-                viewModel.refreshBerryList()
+   Scaffold(topBar = {
+      TopAppBar(title = {
+         Text("Poke Berries 🍓")
+      }, actions = {
+         IconButton(
+            onClick = {
+               showDebugDialog = true
             }) {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                state = gridState,
-                modifier = Modifier
-                    .padding(
-                        top = paddingValues.calculateTopPadding(),
-                        bottom = 0.dp,
-                    )
-                    .padding(horizontal = paddingValues.calculateStartPadding(layoutDirection)),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                contentPadding = PaddingValues(
-                    start = 16.dp, end = 16.dp, top = 16.dp, bottom = 16.dp
-                )
-            ) {
-                items(berries) { berry ->
-                    BerryItem(
-                        berry = berry, onClick = {
-                            onBerryClick(berry.id)
-                        })
-                }
-
-                item(
-                    span = { GridItemSpan(maxLineSpan) }) {
-                    if (isLoading) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(
-                                strokeWidth = 2.dp
-                            )
-                        }
-                    }
-                }
+            Icon(
+               imageVector = Icons.Default.Code, contentDescription = "Debug"
+            )
+         }
+      })
+   }) { paddingValues ->
+      PullToRefreshBox(
+         isRefreshing = isLoading, onRefresh = {
+            viewModel.refreshBerryList()
+         }) {
+         LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            state = gridState,
+            modifier = Modifier
+               .padding(
+                  top = paddingValues.calculateTopPadding(),
+                  bottom = 0.dp,
+               )
+               .padding(horizontal = paddingValues.calculateStartPadding(layoutDirection)),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            contentPadding = PaddingValues(
+               start = 16.dp, end = 16.dp, top = 16.dp, bottom = 16.dp
+            )
+         ) {
+            items(berries) { berry ->
+               BerryItem(
+                  berry = berry, onClick = {
+                     onBerryClick(berry.id)
+                  })
             }
-        }
-    }
 
-    if (showDebugDialog) {
-        AlertDialog(onDismissRequest = {
-            showDebugDialog = false
-        }, confirmButton = {
-            TextButton(
-                onClick = {
-                    showDebugDialog = false
-                }) {
-                Text("Close")
+            item(
+               span = { GridItemSpan(maxLineSpan) }) {
+               if (isLoading) {
+                  Box(
+                     modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                     contentAlignment = Alignment.Center
+                  ) {
+                     CircularProgressIndicator(
+                        strokeWidth = 2.dp
+                     )
+                  }
+               }
             }
-        }, title = {
-            Text("API Debug 📡")
-        }, text = {
-            LazyColumn {
-                item {
-                    Text(
-                        text = """
-REQUEST:
-GET $lastRequestUrl
+         }
+      }
+   }
 
+   if (showDebugDialog) {
 
-RESPONSE:
-$lastResponse
-                            """.trimIndent(), style = MaterialTheme.typography.bodySmall
-                    )
-                }
+      val reqAndRespText = """
+   REQUEST:
+   GET $lastRequestUrl
+
+   RESPONSE:
+   $lastResponse""".trimIndent()
+
+      AlertDialog(onDismissRequest = {
+         showDebugDialog = false
+      }, confirmButton = {
+         TextButton(
+            onClick = {
+               showDebugDialog = false
+            }) {
+            Text("Close")
+         }
+      }, title = {
+         Text("API Debug 📡")
+      }, text = {
+         LazyColumn {
+            item {
+               Text(
+                  text = reqAndRespText,
+                  style = MaterialTheme.typography.bodySmall,
+                  fontWeight = FontWeight.Bold
+               )
             }
-        })
-    }
+         }
+      })
+   }
 }
 
 
